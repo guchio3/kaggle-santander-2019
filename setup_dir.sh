@@ -1,4 +1,6 @@
 # mkdirs
+mkdir exps
+mkdir configs
 mkdir notebooks
 mkdir tools
 mkdir tools/utils
