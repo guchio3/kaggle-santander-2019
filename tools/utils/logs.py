@@ -89,7 +89,7 @@ def dec_timer(func):
 #  life hack utils
 # ==========================================
 def send_line_notification(message):
-    line_token = 'yEbRkNfX02oVGlGLI23JCVMHZzp0r2JIVvbaU1NLHIh'
+    line_token = 'x8blWoNYuFKGcWyTmF22kSvaY3zbO0nQwvCCuHNp0eG'
     endpoint = 'https://notify-api.line.me/api/notify'
     message = "\n{}".format(message)
     payload = {'message': message}

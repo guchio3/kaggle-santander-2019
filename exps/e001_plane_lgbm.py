@@ -14,10 +14,12 @@ from sklearn.model_selection import StratifiedKFold
 from tqdm import tqdm
 
 import lightgbm
-from tools.utils.args import parse_args
+# sys.path.append('../')
+from tools.utils.args import parse_train_args
 from tools.utils.features import (get_all_features, load_features,
                                   select_features)
-from tools.utils.logs import (dec_timer, load_configs, log_evaluation, logInit,
+from tools.utils.configs import load_configs
+from tools.utils.logs import (dec_timer, log_evaluation, logInit,
                               sel_log, send_line_notification)
 from tools.utils.samplings import get_pos_os_index
 from tools.utils.visualizations import save_importance
@@ -27,7 +29,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 NES_DIR = './mnt/inputs/nes_info/'
 FEATURE_DIR = './mnt/inputs/features/'
-CONFIG_FILE = '../configs/c001.yml'
+CONFIG_FILE = './configs/c001.yml'
 
 
 @dec_timer
@@ -74,7 +76,7 @@ def train(args, script_name, configs, logger):
         _features = get_all_features(FEATURE_DIR)
     else:
         _features = configs['features']
-    trn_tst_df = load_features(_features, FEATURE_DIR, logger)\
+    trn_tst_df = load_features(_features, FEATURE_DIR, logger=logger)\
         .set_index('ID_code')
 
     # feature selection if needed
@@ -102,7 +104,7 @@ def train(args, script_name, configs, logger):
 
     # -- Make training dataset
     # print shape
-    sel_log(f'used features are {features_df.columns}', logger)
+    sel_log(f'used features are {features_df.columns.tolist()}', logger)
     sel_log(f'the shape features_df is {features_df.shape}', logger)
 
     # -- CV
@@ -111,6 +113,11 @@ def train(args, script_name, configs, logger):
     PARAMS['nthread'] = os.cpu_count()
 
     sel_log('start training ...', None)
+    oofs = []
+    y_trues = []
+    val_idxes = []
+    scores = []
+    fold_importance_dict = {}
     cv_model = []
     for i, idxes in tqdm(list(enumerate(folds))):
         trn_idx, val_idx = idxes
@@ -136,21 +143,8 @@ def train(args, script_name, configs, logger):
             early_stopping_rounds=200,
             callbacks=[log_evaluation(logger, period=100)],
         )
-        cv_model.append(booster)
 
-    # -- Prediction
-    sel_log('predicting using cv models ...', logger)
-    oofs = []
-    y_trues = []
-    val_idxes = []
-    scores = []
-    fold_importance_dict = {}
-    for i, idxes in tqdm(list(enumerate(pred_folds))):
-        trn_idx, val_idx = idxes
-        # booster = cv_model.boosters[i]
-        booster = cv_model[i]
-
-        # Get and store oof and y_true
+        # predict using trained model
         y_pred = booster.predict(features_df.values[val_idx],
                                  num_iteration=None)
         y_true = target.values[val_idx]
@@ -160,6 +154,7 @@ def train(args, script_name, configs, logger):
 
         # Calc AUC
         auc = roc_auc_score(y_true, y_pred)
+        sel_log(f'fold AUC: {auc}', logger=logger)
         scores.append(auc)
 
         # Save importance info
@@ -167,6 +162,9 @@ def train(args, script_name, configs, logger):
         fold_importance_df['split'] = booster.feature_importance('split')
         fold_importance_df['gain'] = booster.feature_importance('gain')
         fold_importance_dict[i] = fold_importance_df
+
+        # save model
+        cv_model.append(booster)
 
     auc_mean, auc_std = np.mean(scores), np.std(scores)
     sel_log(
@@ -241,8 +239,8 @@ def train(args, script_name, configs, logger):
         sub_df.to_csv(submission_filename, compression='gzip', index=False)
         if args.submit:
             os.system(
-                f'kaggle competitions submit'
-                f'santander-customer-transaction-prediction'
+                f'kaggle competitions submit '
+                f'santander-customer-transaction-prediction '
                 f'-f {submission_filename} -m "{args.message}"')
     return auc_mean, auc_std
 
@@ -253,8 +251,8 @@ if __name__ == '__main__':
     log_file = script_name + '.log'
 
     logger = getLogger(__name__)
-    logger = logInit(logger, '../mnt/logs/', log_file)
-    args = parse_args(logger)
+    logger = logInit(logger, './mnt/logs/', log_file)
+    args = parse_train_args(logger)
     configs = load_configs(CONFIG_FILE, logger)
 
     auc_mean, auc_std = train(args, script_name, configs, logger)

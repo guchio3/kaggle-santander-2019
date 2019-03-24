@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from ..utils.general_utils import sel_log
+from ..utils.logs import sel_log
 
 
 def get_neg_us_index(target, random_state=None):

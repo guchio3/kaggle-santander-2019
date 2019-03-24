@@ -1,6 +1,6 @@
 import yaml
 
-from logs import sel_log
+from .logs import sel_log
 
 
 def load_configs(path, logger=None):

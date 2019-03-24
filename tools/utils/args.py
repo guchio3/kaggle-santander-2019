@@ -1,9 +1,9 @@
 import argparse
 
-from logs import sel_log
+from .logs import sel_log
 
 
-def parse_args(logger=None):
+def parse_train_args(logger=None):
     '''
     Policy
     ------------
@@ -40,3 +40,32 @@ def parse_args(logger=None):
     assert args.debug + args.submit < 2, 'U cannot submit w/ debug mode.'
     sel_log(f'args: {sorted(vars(args).items())}', logger)
     return args
+
+
+def parse_feature_args(logger=None):
+    '''
+    Policy
+    ------------
+    * experiment id must be required
+
+    '''
+    parser = argparse.ArgumentParser(
+        prog='XXX.py',
+        usage='ex) python XXX.py -f f001 -m "mk f001 features"',
+        description='short explanation of args',
+        add_help=True,
+    )
+    parser.add_argument('-f', '--feature_ids',
+                        help='feature id',
+                        type=str,
+                        nargs='+',
+                        required=True)
+    parser.add_argument('-m', '--message',
+                        help='messages about the process',
+                        type=str,
+                        default='')
+
+    args = parser.parse_args()
+    sel_log(f'args: {sorted(vars(args).items())}', logger)
+    return args
+

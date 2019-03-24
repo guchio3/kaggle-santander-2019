@@ -5,7 +5,6 @@ from multiprocessing import Pool
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
 from .logs import dec_timer, sel_log
 
@@ -101,7 +100,7 @@ def select_features(df, importance_csv_path, metric='gain_mean', topk=10):
 
 
 @dec_timer
-def _mk_features(load_func, feature_func, nthread=os.cpu_count(), feature_ids,
+def _mk_features(load_func, feature_func, feature_ids, nthread=os.cpu_count(),
                  trn_tst_df=None, trn_df=None, tst_df=None,
                  logger=None):
     # Load dfs
@@ -118,8 +117,8 @@ def _mk_features(load_func, feature_func, nthread=os.cpu_count(), feature_ids,
         trn_tst_df,
         'ID_code',
         'ID_code',
-        trn_tst_df['ID_code'].nunique(),
-        # nthread,
+        # trn_tst_df['ID_code'].nunique(),
+        nthread,
         logger=logger)
 
     with Pool(nthread) as p:
@@ -140,7 +139,7 @@ def _mk_features(load_func, feature_func, nthread=os.cpu_count(), feature_ids,
         features_df, on='ID_code', how='left')
 
     # Save the features
-    feature_dir = './inputs/features/'
+    feature_dir = './mnt/inputs/features/'
     sel_log(f'saving features ...', logger)
     save_features(trn_tst_df, feature_dir, nthread, logger)
 
