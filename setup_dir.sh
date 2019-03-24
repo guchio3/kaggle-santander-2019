@@ -18,6 +18,10 @@ mkdir mnt
 # mkdir mnt/inputs/
 
 # set .gitignore
-touch .gitignore
-echo "tags*" >> .gitignore
-echo "mnt/" >> .gitignore
+if [ -e ".gitignore" ]; then
+    echo ".gitignore already exists!"
+else
+    touch .gitignore
+    echo "tags*" >> .gitignore
+    echo "mnt/" >> .gitignore
+fi
