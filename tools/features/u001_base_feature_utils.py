@@ -3,12 +3,15 @@ import pandas as pd
 from ..utils.logs import dec_timer, sel_log
 
 from .f001_raw_features import f001_raw_features
+from .f002_900_kernel_features import f002_900_kernel_features
 
 
 def _base_features(df, feature_ids):
     _features = []
     if 'f001' in feature_ids:
         _features.append(f001_raw_features(df))
+    if 'f002' in feature_ids:
+        _features.append(f002_900_kernel_features(df))
     features = pd.concat(_features, axis=1)
     return features
 
@@ -18,6 +21,7 @@ def _load_base_features(
         feature_ids, trn_tst_df, trn_df, tst_df, logger):
     target_ids = [
         'f001',
+        'f002',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
