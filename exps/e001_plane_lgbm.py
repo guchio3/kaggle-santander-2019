@@ -120,7 +120,7 @@ def train(args, script_name, configs, logger):
             trn_idx = get_pos_os_index(
                 target[trn_idx],
                 configs['train']['os_lim'],
-                configs['train']['random_state'])
+                configs['train']['sampling_random_state'])
         # make lgbm dataset
         train_set = lightgbm.Dataset(features_df.iloc[trn_idx],
                                      target[trn_idx],)

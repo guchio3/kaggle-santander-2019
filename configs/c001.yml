@@ -1,0 +1,46 @@
+# training settings
+train:
+    # fold setting
+    fold_num: 5
+    fold_type: skf
+    # resampling setting
+    sampling_type: pos
+    os_lim: 1000000
+    sampling_random_state: 71
+    # single model setting
+    single_model: False
+    # feature setting
+    all_features: True
+    # feature selection setting
+    feature_selection: False
+    feature_select_path: 'importances/'
+    metric: 'split_cov'
+    feature_topk: 150
+
+# lightGBM parameters
+lgbm_params:
+    boosting: gbdt
+    verbose: -1
+    random_state: 71
+    objective: binary
+    metric: binary_logloss
+    # metric: auc
+    learning_rate: 0.05
+    # num_leaves: 256
+    num_leaves: 63
+    max_depth: -1
+    subsample: 0.8
+    bagging_freq: 1
+    colsample_bytree: 0.5
+    min_data_in_leaf: 60
+    lambda_l1: 0.1
+    min_data_per_group: 1
+    cat_smooth: 750
+    cat_l2: 100
+    max_cat_to_onehot: 10
+    #    min_split_gain: 
+    #    min_child_weight: 
+    #    max_bin: 
+
+features:
+    - ID_code
