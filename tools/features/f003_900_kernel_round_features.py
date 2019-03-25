@@ -5,10 +5,12 @@ import pandas as pd
 def f003_900_kernel_round_features(df):
     res_df = pd.DataFrame()
     res_df['ID_code'] = df['ID_code']
-    df.drop(['ID_code', 'target'], axis=1, inplace=True)
+    # do not use inplace for re-using
+    df = df.drop(['ID_code', 'target'], axis=1)
     # col rounding
     for col in df.columns:
         res_df[f'r1_{col}'] = np.round(df[col], 1)
         res_df[f'r2_{col}'] = np.round(df[col], 2)
-    res_df = res_df.set_index('ID_code').add_prefix('f003_').reset_index()
+    # return as id is set to the index
+    res_df = res_df.set_index('ID_code').add_prefix('f003_')
     return res_df

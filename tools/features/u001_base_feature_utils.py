@@ -15,7 +15,9 @@ def _base_features(df, feature_ids):
         _features.append(f002_900_kernel_stat_features(df))
     if 'f003' in feature_ids:
         _features.append(f003_900_kernel_round_features(df))
-    features = pd.concat(_features, axis=1)
+    # merge cols
+    # reset index to get id as a column
+    features = pd.concat(_features, axis=1).reset_index()
     return features
 
 
