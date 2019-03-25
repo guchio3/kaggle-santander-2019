@@ -447,6 +447,14 @@ features:
     - f002_r1_var_97
     - f002_r1_var_98
     - f002_r1_var_99
+    - f002_horizontal_kurt
+    - f002_horizontal_max
+    - f002_horizontal_mean
+    - f002_horizontal_median
+    - f002_horizontal_min
+    - f002_horizontal_skew
+    - f002_horizontal_std
+    - f002_horizontal_sum
     - f002_r2_var_0
     - f002_r2_var_1
     - f002_r2_var_10
