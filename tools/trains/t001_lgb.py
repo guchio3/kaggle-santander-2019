@@ -115,11 +115,12 @@ def t001_lgb_train(args, script_name, configs, logger):
         trn_idx, val_idx = idxes
         # -- Data resampling
         # Stock original data for validation
-        if configs['train']['sampling_type'] == 'pos':
-            trn_idx = get_pos_os_index(
-                target[trn_idx],
-                configs['train']['os_lim'],
-                configs['train']['sampling_random_state'])
+        trn_idx = resampling(
+            target[trn_idx],
+            configs['train']['sampling_type'],
+            configs['train']['sampling_random_state'],
+            logger=logger)
+
         # make lgbm dataset
         train_set = lightgbm.Dataset(features_df.iloc[trn_idx],
                                      target[trn_idx],)

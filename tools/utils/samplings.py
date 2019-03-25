@@ -38,7 +38,12 @@ def get_binary_os_index(target, os_lim, random_state=None):
 
 def resampling(target, resampling_type, random_state,
                os_lim=np.inf, logger=None):
-    if resampling_type == 'b_under':
+    assert (target.reset_index()['index'].diff().dropna() == 1).all(), \
+        'the index of the target is not reset'
+    if resampling_type == 'none':
+        sel_log('none, which means not apply resampling !', logger)
+        resampled_index = target.index
+    elif resampling_type == 'b_under':
         sel_log('now binary under sampling ...', logger)
         resampled_index = get_binary_us_index(target, random_state)
     elif resampling_type == 'b_over':
