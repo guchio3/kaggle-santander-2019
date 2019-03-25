@@ -5,9 +5,11 @@ train:
     fold_type: skf
     # resampling setting
     # sampling_type: pos
-    sampling_type: none
+    sampling_type: b_rand_aug
     os_lim: 1000000
     sampling_random_state: 71
+    pos_t: 2
+    neg_t: 1
     # single model setting
     single_model: False
     # feature setting
@@ -31,9 +33,9 @@ lgbm_params:
     # num_leaves: 256
     num_leaves: 13
     max_depth: -1
-    subsample: 0.8
+    subsample: 0.4
     bagging_freq: 5
-    colsample_bytree: 0.4
+    colsample_bytree: 1.0
     min_data_in_leaf: 60
     min_sum_hessian_in_leaf: 10.0
     lambda_l1: 0.1
@@ -41,9 +43,6 @@ lgbm_params:
     cat_smooth: 750
     cat_l2: 100
     max_cat_to_onehot: 10
-    #    min_split_gain: 
-    #    min_child_weight: 
-    #    max_bin: 
 
 features:
     - ID_code

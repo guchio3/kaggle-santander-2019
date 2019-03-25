@@ -14,7 +14,7 @@ from tqdm import tqdm
 from tools.utils.features import (get_all_features, load_features,
                                   select_features)
 from tools.utils.logs import dec_timer, log_evaluation, sel_log
-from tools.utils.samplings import get_binary_os_index, resampling
+from tools.utils.samplings import value_resampling
 from tools.utils.visualizations import save_importance
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -115,15 +115,19 @@ def t001_lgb_train(args, script_name, configs, logger):
         trn_idx, val_idx = idxes
         # -- Data resampling
         # Stock original data for validation
-        trn_idx = resampling(
+        fold_features_df, fold_target = value_resampling(
+            features_df[trn_idx],
             target[trn_idx],
             configs['train']['sampling_type'],
             configs['train']['sampling_random_state'],
+            configs['train']['os_lim'],
+            configs['train']['pos_t'],
+            configs['train']['neg_t'],
             logger=logger)
 
         # make lgbm dataset
-        train_set = lightgbm.Dataset(features_df.iloc[trn_idx],
-                                     target[trn_idx],)
+        train_set = lightgbm.Dataset(fold_features_df,
+                                     fold_target)
         valid_set = lightgbm.Dataset(features_df.iloc[val_idx],
                                      target[val_idx],)
         # train
