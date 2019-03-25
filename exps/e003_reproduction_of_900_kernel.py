@@ -5,7 +5,7 @@ from logging import getLogger
 from tools.utils.args import parse_train_args
 from tools.utils.configs import load_configs
 from tools.utils.logs import logInit, send_line_notification
-from trains.t001_lgb import t001_lgb_train as train
+from tools.trains.t001_lgb import t001_lgb_train as train
 
 CONFIG_FILE = './configs/c003.yml'
 
