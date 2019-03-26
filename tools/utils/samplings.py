@@ -108,10 +108,10 @@ def get_binary_random_augment_values(
         for col in neg_df.columns:
             neg_df[col] = neg_df[col].sample(frac=1, random_state=random_state)
         res_dfs.append(neg_df)
-        res_targets.append(pd.Series(np.ones(pos_df.shape[0])))
+        res_targets.append(pd.Series(np.zeros(neg_df.shape[0])))
     # concat values
-    res_features = pd.concat(res_dfs, axis=0)
-    res_target = pd.concat(res_targets, axis=0)
+    res_features = pd.concat(res_dfs, axis=0).reset_index(drop=True)
+    res_target = pd.concat(res_targets, axis=0).reset_index(drop=True)
     return res_features, res_target
 
 
@@ -129,7 +129,7 @@ def value_resampling(features_df, target, resampling_type, random_state,
         res_features, res_target = get_binary_os_values(
             features_df, target, os_lim, random_state)
     elif resampling_type == 'b_rand_aug':
-        sel_log('now binary over sampling ...', logger)
+        sel_log('now random augmentation sampling ...', logger)
         res_features, res_target = get_binary_random_augment_values(
             features_df, target, pos_t, neg_t, random_state=None)
     else:

@@ -25,7 +25,7 @@ FEATURE_DIR = './mnt/inputs/features/'
 
 
 @dec_timer
-def t001_lgb_train(args, script_name, configs, logger):
+def t002_lgb_train(args, script_name, configs, logger):
     '''
     policy
     ------------
@@ -116,7 +116,7 @@ def t001_lgb_train(args, script_name, configs, logger):
         # -- Data resampling
         # Stock original data for validation
         fold_features_df, fold_target = value_resampling(
-            features_df[trn_idx],
+            features_df.iloc[trn_idx],
             target[trn_idx],
             configs['train']['sampling_type'],
             configs['train']['sampling_random_state'],
