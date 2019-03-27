@@ -46,7 +46,7 @@ def get_all_features(path):
 
 def _load_feature(feature, base_dir, logger=None):
     load_filename = base_dir + feature + '.pkl.gz'
-    sel_log(f'loading from {load_filename} ...', logger)
+    # sel_log(f'loading from {load_filename} ...', logger)
     feature = pd.read_pickle(load_filename, compression='gzip')
     # drop index because its very heavy to concat, and already sorted.
     feature.reset_index(drop=True, inplace=True)

@@ -7,7 +7,7 @@ from tools.utils.configs import load_configs
 from tools.utils.logs import logInit, send_line_notification
 from tools.trains.t002_lgb import t002_lgb_train as train
 
-CONFIG_FILE = './configs/c006.yml'
+CONFIG_FILE = './configs/c007.yml'
 
 if __name__ == '__main__':
     t0 = time.time()
