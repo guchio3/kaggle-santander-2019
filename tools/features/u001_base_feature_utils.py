@@ -5,6 +5,7 @@ from ..utils.logs import dec_timer, sel_log
 from .f001_raw_features import f001_raw_features
 from .f002_900_kernel_stat_features import f002_900_kernel_stat_features
 from .f003_900_kernel_round_features import f003_900_kernel_round_features
+from .f008_all_norm_features import f008_all_norm_features
 
 
 def _base_features(df, feature_ids):
@@ -15,6 +16,8 @@ def _base_features(df, feature_ids):
         _features.append(f002_900_kernel_stat_features(df))
     if 'f003' in feature_ids:
         _features.append(f003_900_kernel_round_features(df))
+    if 'f008' in feature_ids:
+        _features.append(f008_all_norm_features(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -28,6 +31,7 @@ def _load_base_features(
         'f001',
         'f002',
         'f003',
+        'f008',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''

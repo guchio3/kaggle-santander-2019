@@ -4,6 +4,10 @@ from ..utils.logs import dec_timer, sel_log
 
 from .f004_mode_shift_pow_features import f004_mode_shift_pow_features
 from .f006_uniq_cnt_encoding_features import f006_uniq_cnt_encoding_features
+from .f009_uniq_mask_features import f009_uniq_mask_features
+from .f010_non_uniq_features import f010_non_uniq_features
+from .f011_only_trn_non_uniq_features import f011_only_trn_non_uniq_features
+from .f012_common_features import f012_common_features
 
 
 def _colwise_features(df, feature_ids):
@@ -12,6 +16,14 @@ def _colwise_features(df, feature_ids):
         _features.append(f004_mode_shift_pow_features(df))
     if 'f006' in feature_ids:
         _features.append(f006_uniq_cnt_encoding_features(df))
+    if 'f009' in feature_ids:
+        _features.append(f009_uniq_mask_features(df))
+    if 'f010' in feature_ids:
+        _features.append(f010_non_uniq_features(df))
+    if 'f011' in feature_ids:
+        _features.append(f011_only_trn_non_uniq_features(df))
+    if 'f012' in feature_ids:
+        _features.append(f012_common_features(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -24,6 +36,10 @@ def _load_colwise_features(
     target_ids = [
         'f004',
         'f006',
+        'f009',
+        'f010',
+        'f011',
+        'f012',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
