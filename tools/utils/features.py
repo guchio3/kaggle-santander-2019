@@ -144,3 +144,38 @@ def _mk_features(load_func, feature_func, feature_ids, nthread=os.cpu_count(),
     save_features(trn_tst_df, feature_dir, nthread, logger)
 
     return trn_tst_df, trn_df, tst_df
+
+
+@dec_timer
+def _mk_colwise_features(load_func, feature_func, feature_ids,
+                         nthread=os.cpu_count(),
+                         trn_tst_df=None, trn_df=None, tst_df=None,
+                         logger=None):
+    # Load dfs
+    # Does not load if the exp_ids are not the targets.
+    trn_tst_df, trn_df, tst_df = load_func(
+        feature_ids, trn_tst_df, trn_df, tst_df, logger)
+    # Finish before feature engineering if the exp_ids are not the targets.
+    if trn_tst_df is None:
+        return None, None, None
+
+    # get ids
+    ids = pd.DataFrame(trn_tst_df.ID_code)
+    # fe
+    # reset_index to avoid duplicated index error
+    trn_tst_df.reset_index(drop=True, inplace=True)
+    features_df = feature_func(trn_tst_df, feature_ids)
+
+    # Merge w/ meta.
+    # This time, i don't remove the original features because
+    #   this is the base feature function.
+    sel_log(f'merging features ...', None)
+    trn_tst_df = ids.merge(
+        features_df, on='ID_code', how='left')
+
+    # Save the features
+    feature_dir = './mnt/inputs/features/'
+    sel_log(f'saving features ...', logger)
+    save_features(trn_tst_df, feature_dir, nthread, logger)
+
+    return trn_tst_df, trn_df, tst_df
