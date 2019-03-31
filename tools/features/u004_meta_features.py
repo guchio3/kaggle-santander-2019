@@ -5,6 +5,7 @@ import pandas as pd
 
 from .f015_f014_stats import f015_f014_stats
 from .f016_nan_counts import f016_nan_counts
+from .f019_filtered_round_features import f019_filtered_round_features
 
 from ..utils.configs import load_configs
 from ..utils.features import load_features
@@ -17,6 +18,8 @@ def _meta_features(df, feature_ids):
         _features.append(f015_f014_stats(df))
     if 'f016' in feature_ids:
         _features.append(f016_nan_counts(df))
+    if 'f019' in feature_ids:
+        _features.append(f019_filtered_round_features(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -29,6 +32,7 @@ def _load_meta_features(
     target_ids = [
         'f015',
         'f016',
+        'f019',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''

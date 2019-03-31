@@ -93,3 +93,32 @@ def get_public_and_private_indices(
     print(f'PUBLIC_LB: {len(public_LB)}')
     print(f'PRIVATE_LB: {len(private_LB)}')
     return public_LB, private_LB
+
+
+def get_fake_ids():
+    tst_ids = pd.read_pickle('./mnt/inputs/nes_info/tst_ID_code.pkl.gz')
+    fakes = np.load('./mnt/inputs/nes_info/synthetic_samples_indexes.npz.npy')
+    fake_ids = tst_ids.iloc[fakes]
+    fake_ids.reset_index(drop=True).to_pickle(
+        './mnt/inputs/nes_info/fake_ids.pkl.gz',
+        compression='gzip')
+
+
+def get_target_w_fakes():
+    target = pd.read_pickle('./mnt/inputs/nes_info/target.pkl.gz')
+    fakes = np.load('./mnt/inputs/nes_info/synthetic_samples_indexes.npz.npy')
+    target_w_fakes = pd.concat(
+        [target, pd.Series(np.zeros(fakes.shape), name='target')], axis=0)
+    print(f'generated target_w_fakes, {target_w_fakes.shape}')
+    target_w_fakes.reset_index(drop=True).to_pickle(
+        './mnt/inputs/nes_info/target_w_fakes.pkl.gz',
+        compression='gzip')
+
+
+def get_trn_ids_w_fakes():
+    trn_ids = pd.read_pickle('./mnt/inputs/nes_info/trn_ID_code.pkl.gz')
+    fake_ids = pd.read_pickle('./mnt/inputs/nes_info/fake_ids.pkl.gz')
+    trn_ids_w_fakes = pd.concat([trn_ids, fake_ids], axis=0)
+    trn_ids_w_fakes.reset_index(drop=True).to_pickle(
+        './mnt/inputs/nes_info/trn_ID_code_w_fakes.pkl.gz',
+        compression='gzip')
