@@ -18,8 +18,8 @@ def f020_f014_2uniq(df):
         real_col = df.loc[tst_id][col].iloc[reals]
         uniq_cnt_dict = pd.concat(
             [trn_col, real_col], axis=0).value_counts().to_dict()
-        res_df['non_uniq_real_' + col] = df[col].apply(
-            lambda x: x if uniq_cnt_dict[x] > 1 else np.nan).values
+        res_df['non_2uniq_real_' + col] = df[col].apply(
+            lambda x: x if uniq_cnt_dict[x] > 2 else np.nan).values
     # return as id is set to the index
     res_df = res_df.set_index('ID_code').add_prefix('f020_')
     return res_df
