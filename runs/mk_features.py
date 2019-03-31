@@ -9,6 +9,8 @@ from tools.features.u002_colwise_features import (_colwise_features,
                                                   _load_colwise_features)
 from tools.features.u003_colwise_meta_features import (_colwise_meta_features,
                                                        _load_colwise_meta_features)
+from tools.features.u004_meta_features import (_load_meta_features,
+                                               _meta_features)
 from tools.utils.args import parse_feature_args
 from tools.utils.features import _mk_colwise_features, _mk_features
 from tools.utils.logs import dec_timer, logInit, send_line_notification
@@ -30,6 +32,10 @@ def mk_features(args, logger):
         trn_df, tst_df, logger=logger)
     trn_tst_df, trn_meta_df, tst_meta_df = _mk_colwise_features(
         _load_colwise_meta_features, _colwise_meta_features,
+        args.feature_ids, os.cpu_count(), trn_tst_df,
+        trn_df, tst_df, logger=logger)
+    trn_tst_df, trn_meta_df, tst_meta_df = _mk_features(
+        _load_meta_features, _meta_features,
         args.feature_ids, os.cpu_count(), trn_tst_df,
         trn_df, tst_df, logger=logger)
 

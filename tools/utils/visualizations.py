@@ -12,8 +12,8 @@ from matplotlib import pyplot as plt
 def num_feature_comp_hist(features, titles, colors):
     num_features = len(features)
     fig, axs = plt.subplots(1, num_features, figsize=(5 * num_features, 4))
-    xmin = np.min([feature.min() for feature in features])
-    xmax = np.max([feature.max() for feature in features])
+    xmin = np.min([feature.min() for feature in features if len(feature) > 0])
+    xmax = np.max([feature.max() for feature in features if len(feature) > 0])
     for feature, title, color, ax in zip(features, titles, colors, axs):
         sns.distplot(feature, kde=False, ax=ax, color=color)
         ax.set_xlim(xmin, xmax)

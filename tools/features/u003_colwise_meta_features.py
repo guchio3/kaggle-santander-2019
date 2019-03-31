@@ -7,12 +7,18 @@ from ..utils.configs import load_configs
 from ..utils.features import load_features
 from ..utils.logs import dec_timer, sel_log
 from .f007_uniq_cnt_meta_features import f007_uniq_cnt_meta_features
+from .f017_filtered_uniq_cnt_encoding import f017_filtered_uniq_cnt_encoding
+from .f018_filtered_uniq_cnt_encoding_real import f018_filtered_uniq_cnt_encoding_real
 
 
 def _colwise_meta_features(df, exp_ids):
     _features = []
     if 'f007' in exp_ids:
         _features.append(f007_uniq_cnt_meta_features(df))
+    if 'f017' in exp_ids:
+        _features.append(f017_filtered_uniq_cnt_encoding(df))
+    if 'f018' in exp_ids:
+        _features.append(f018_filtered_uniq_cnt_encoding_real(df))
     features = pd.concat(_features, axis=1)
     return features
 
@@ -22,6 +28,8 @@ def _load_colwise_meta_features(
         feature_ids, trn_tst_df, trn_df, tst_df, logger):
     target_ids = [
         'f007',
+        'f017',
+        'f018',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
