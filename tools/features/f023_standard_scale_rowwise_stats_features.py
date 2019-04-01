@@ -14,12 +14,11 @@ def f023_standard_scale_rowwise_stats_features(df):
     df = df.set_index('ID_code')
     trn_df = df.loc[trn_id].reset_index(drop=True)
     tst_df = df.loc[tst_id]
-    real_df = tst_df.iloc[reals.reset_index(drop=True)]
+    real_df = tst_df.iloc[reals].reset_index(drop=True)
     fit_df = pd.concat([trn_df, real_df], axis=0)
-    df = df.set_index('ID_code')
     ss = StandardScaler()
     ss.fit(fit_df)
-    df = ss.transform(df)
+    df = pd.DataFrame(ss.transform(df))
     # horizontal stats
     res_df['ss_horizontal_sum'] = df.sum(axis=1)
     res_df['ss_horizontal_min'] = df.min(axis=1)
