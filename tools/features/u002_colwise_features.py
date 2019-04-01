@@ -10,6 +10,7 @@ from .f011_only_trn_non_uniq_features import f011_only_trn_non_uniq_features
 from .f012_common_features import f012_common_features
 from .f014_non_uniq_real_features import f014_non_uniq_real_features
 from .f020_f014_2uniq import f020_f014_2uniq
+from .f021_uniq_real_features import f021_uniq_real_features
 
 
 def _colwise_features(df, feature_ids):
@@ -30,6 +31,8 @@ def _colwise_features(df, feature_ids):
         _features.append(f014_non_uniq_real_features(df))
     if 'f020' in feature_ids:
         _features.append(f020_f014_2uniq(df))
+    if 'f021' in feature_ids:
+        _features.append(f021_uniq_real_features(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -48,6 +51,7 @@ def _load_colwise_features(
         'f012',
         'f014',
         'f020',
+        'f021',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
