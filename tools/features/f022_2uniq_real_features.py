@@ -3,7 +3,7 @@ import pandas as pd
 from tqdm import tqdm
 
 
-def f021_uniq_real_features(df):
+def f022_2uniq_real_features(df):
     res_df = pd.DataFrame()
     res_df['ID_code'] = df['ID_code']
     # do not use inplace for re-using
@@ -18,8 +18,8 @@ def f021_uniq_real_features(df):
         real_col = df.loc[tst_id][col].iloc[reals]
         uniq_cnt_dict = pd.concat(
             [trn_col, real_col], axis=0).value_counts().to_dict()
-        res_df['uniq_real_' + col] = df[col].apply(
-            lambda x: x if uniq_cnt_dict[x] == 1 else np.nan).values
+        res_df['2uniq_real_' + col] = df[col].apply(
+            lambda x: x if uniq_cnt_dict[x] <= 2 else np.nan).values
     # return as id is set to the index
-    res_df = res_df.set_index('ID_code').add_prefix('f021_')
+    res_df = res_df.set_index('ID_code').add_prefix('f022_')
     return res_df
