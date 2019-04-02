@@ -3,7 +3,7 @@ import pandas as pd
 from tqdm import tqdm
 
 
-def f024_col_each_cnt_raw_features(df):
+def f025_f024_or_more_features(df):
     res_df = pd.DataFrame()
     res_df['ID_code'] = df['ID_code']
     # do not use inplace for re-using
@@ -19,10 +19,10 @@ def f024_col_each_cnt_raw_features(df):
             real_col = df.loc[tst_id][col].iloc[reals]
             uniq_cnt_dict = pd.concat(
                 [trn_col, real_col], axis=0).value_counts().to_dict()
-            res_df['non_uniq_real_' + col] = df[col]\
+            res_df['non_uniq_real_or_more_' + col] = df[col]\
                 .apply(lambda x: x if uniq_cnt_dict[x]
-                       == target_cnt else np.nan).values
+                       > target_cnt else np.nan).values
     # set prefix
     # return as id is set to the index
-    res_df = res_df.set_index('ID_code').add_prefix('f024_')
+    res_df = res_df.set_index('ID_code').add_prefix('f025_')
     return res_df
