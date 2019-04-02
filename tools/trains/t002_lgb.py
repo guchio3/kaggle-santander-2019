@@ -134,7 +134,7 @@ def t002_lgb_train(args, script_name, configs, logger):
         booster = lightgbm.train(
             params=PARAMS.copy(),
             train_set=train_set,
-            num_boost_round=100000,
+            num_boost_round=1000000,
             valid_sets=[valid_set, train_set],
             verbose_eval=1000,
             early_stopping_rounds=2000,
