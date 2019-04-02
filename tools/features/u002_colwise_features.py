@@ -14,6 +14,10 @@ from .f021_uniq_real_features import f021_uniq_real_features
 from .f022_2uniq_real_features import f022_2uniq_real_features
 from .f024_col_each_cnt_raw_features import f024_col_each_cnt_raw_features
 from .f025_f024_or_more_features import f025_f024_or_more_features
+from .f026_f014_3uniq import f026_f014_3uniq
+from .f027_f014_3nonuniq import f027_f014_3nonuniq
+from .f028_f014_4uniq import f028_f014_4uniq
+from .f029_f014_4nonuniq import f029_f014_4nonuniq
 
 
 def _colwise_features(df, feature_ids):
@@ -42,6 +46,14 @@ def _colwise_features(df, feature_ids):
         _features.append(f024_col_each_cnt_raw_features(df))
     if 'f025' in feature_ids:
         _features.append(f025_f024_or_more_features(df))
+    if 'f026' in feature_ids:
+        _features.append(f026_f014_3uniq(df))
+    if 'f027' in feature_ids:
+        _features.append(f027_f014_3nonuniq(df))
+    if 'f028' in feature_ids:
+        _features.append(f028_f014_4uniq(df))
+    if 'f029' in feature_ids:
+        _features.append(f029_f014_4nonuniq(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -64,6 +76,10 @@ def _load_colwise_features(
         'f022',
         'f024',
         'f025',
+        'f026',
+        'f027',
+        'f028',
+        'f029',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
