@@ -19,7 +19,7 @@ def f025_f024_or_more_features(df):
             real_col = df.loc[tst_id][col].iloc[reals]
             uniq_cnt_dict = pd.concat(
                 [trn_col, real_col], axis=0).value_counts().to_dict()
-            res_df['non_uniq_real_or_more_' + col] = df[col]\
+            res_df[f'non_uniq_real_each_cnt_{target_cnt}_or_more_' + col] = df[col]\
                 .apply(lambda x: x if uniq_cnt_dict[x]
                        > target_cnt else np.nan).values
     # set prefix
