@@ -15,10 +15,10 @@ train:
     # feature setting
     all_features: False
     # feature selection setting
-    feature_selection: False
-    feature_select_path: 'importances/'
-    metric: 'split_cov'
-    feature_topk: 150
+    feature_selection: True
+    feature_select_path: './mnt/importances/e041_each_cnt_raw_features_2019-04-02-09-39-25_0.91675_importances.csv'
+    metric: 'gain_mean'
+    feature_topk: 2000
 
 # lightGBM parameters
 lgbm_params:
