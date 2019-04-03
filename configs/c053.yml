@@ -5,20 +5,20 @@ train:
     fold_type: skf
     # resampling setting
     # sampling_type: pos
-    sampling_type: b_rand_aug
-    os_lim: 10000000
+    sampling_type: none
+    os_lim: 1000000
     sampling_random_state: 71
-    pos_t: 3
+    pos_t: 0
     neg_t: 0
     # single model setting
     single_model: False
     # feature setting
     all_features: False
     # feature selection setting
-    feature_selection: False
-    feature_select_path: 'importances/'
-    metric: 'split_cov'
-    feature_topk: 150
+    feature_selection: True
+    feature_select_path: './mnt/importances/e036_e034_plus_e035_2019-04-01-16-40-50_0.92275_importances.csv'
+    metric: 'gain_mean'
+    feature_topk: 500
 
 # lightGBM parameters
 lgbm_params:

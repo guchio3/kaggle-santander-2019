@@ -90,7 +90,7 @@ def get_binary_os_values(features_df, target, os_lim, random_state=None):
 
 @jit
 def get_binary_random_augment_values(
-        features_df, target, pos_t, neg_t, random_state=None):
+        features_df, target, pos_t, neg_t, random_state=71):
     pos_ids = target[target == 1].index
     neg_ids = target[target == 0].index
     res_dfs = [features_df]
@@ -100,7 +100,7 @@ def get_binary_random_augment_values(
         pos_df = features_df.loc[pos_ids].copy()
         for j, col in enumerate(pos_df.columns):
             pos_df[col] = pos_df[col].sample(
-                frac=1, random_state=random_state + j)
+                frac=1, random_state=random_state * i + j)
         res_dfs.append(pos_df)
         res_targets.append(pd.Series(np.ones(pos_df.shape[0])))
     # augment negative values
@@ -108,7 +108,7 @@ def get_binary_random_augment_values(
         neg_df = features_df.loc[neg_ids].copy()
         for j, col in enumerate(neg_df.columns):
             neg_df[col] = neg_df[col].sample(
-                frac=1, random_state=random_state + j)
+                frac=1, random_state=random_state * i + j)
         res_dfs.append(neg_df)
         res_targets.append(pd.Series(np.zeros(neg_df.shape[0])))
     # concat values
@@ -133,7 +133,7 @@ def value_resampling(features_df, target, resampling_type, random_state,
     elif resampling_type == 'b_rand_aug':
         sel_log('now random augmentation sampling ...', logger)
         res_features, res_target = get_binary_random_augment_values(
-            features_df, target, pos_t, neg_t, random_state=None)
+            features_df, target, pos_t, neg_t, random_state=random_state)
     else:
         sel_log(f'ERROR: wrong resampling type ({resampling_type})', logger)
         sel_log('plz specify "under" or "over".', logger)
