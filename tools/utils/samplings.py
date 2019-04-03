@@ -98,15 +98,17 @@ def get_binary_random_augment_values(
     # augment positive values
     for i in range(pos_t):
         pos_df = features_df.loc[pos_ids].copy()
-        for col in pos_df.columns:
-            pos_df[col] = pos_df[col].sample(frac=1, random_state=random_state)
+        for j, col in enumerate(pos_df.columns):
+            pos_df[col] = pos_df[col].sample(
+                frac=1, random_state=random_state + j)
         res_dfs.append(pos_df)
         res_targets.append(pd.Series(np.ones(pos_df.shape[0])))
     # augment negative values
     for i in range(neg_t):
         neg_df = features_df.loc[neg_ids].copy()
-        for col in neg_df.columns:
-            neg_df[col] = neg_df[col].sample(frac=1, random_state=random_state)
+        for j, col in enumerate(neg_df.columns):
+            neg_df[col] = neg_df[col].sample(
+                frac=1, random_state=random_state + j)
         res_dfs.append(neg_df)
         res_targets.append(pd.Series(np.zeros(neg_df.shape[0])))
     # concat values
