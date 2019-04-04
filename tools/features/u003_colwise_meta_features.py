@@ -14,6 +14,7 @@ from .f023_standard_scale_rowwise_stats_features import \
     f023_standard_scale_rowwise_stats_features
 from .f031_graseck_normal_pdf_ratio_on_e036_features import \
     f031_graseck_normal_pdf_ratio_on_e036_features
+from .f032_e036_ss_pow_features import f032_e036_ss_pow_features
 
 
 def _colwise_meta_features(df, feature_ids):
@@ -28,6 +29,8 @@ def _colwise_meta_features(df, feature_ids):
         _features.append(f023_standard_scale_rowwise_stats_features(df))
     if 'f031' in feature_ids:
         _features.append(f031_graseck_normal_pdf_ratio_on_e036_features(df))
+    if 'f032' in feature_ids:
+        _features.append(f032_e036_ss_pow_features(df))
     features = pd.concat(_features, axis=1)
     return features
 
@@ -41,6 +44,7 @@ def _load_colwise_meta_features(
         'f018',
         'f023',
         'f031',
+        'f032',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
