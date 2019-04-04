@@ -117,6 +117,37 @@ def get_binary_random_augment_values(
     return res_features, res_target
 
 
+@jit
+def get_binary_random_augment_values_w_pairs(
+        features_df, target, pos_t, neg_t, random_state=71):
+    pos_ids = target[target == 1].index
+    neg_ids = target[target == 0].index
+    res_dfs = [features_df]
+    res_targets = [target]
+    # augment positive values
+    for i in range(pos_t):
+        pos_df = features_df.loc[pos_ids].copy()
+        for j in range(pos_df.shape[1] - 400):
+            k = j + 400 if j > 399 else [j, j + 400]
+            pos_df.iloc[:, k] = pos_df.iloc[:, k].sample(
+                frac=1, random_state=random_state * i * 10 + j)
+        res_dfs.append(pos_df)
+        res_targets.append(pd.Series(np.ones(pos_df.shape[0])))
+    # augment negative values
+    for i in range(neg_t):
+        neg_df = features_df.loc[neg_ids].copy()
+        for j in range(neg_df.shape[1] - 400):
+            k = j + 400 if j > 399 else [j, j + 400]
+            neg_df.iloc[:, k] = neg_df.iloc[:, k].sample(
+                frac=1, random_state=random_state * i * 10 + j)
+        res_dfs.append(neg_df)
+        res_targets.append(pd.Series(np.zeros(neg_df.shape[0])))
+    # concat values
+    res_features = pd.concat(res_dfs, axis=0).reset_index(drop=True)
+    res_target = pd.concat(res_targets, axis=0).reset_index(drop=True)
+    return res_features, res_target
+
+
 def value_resampling(features_df, target, resampling_type, random_state,
                      os_lim=np.inf, pos_t=2, neg_t=1, logger=None):
     if resampling_type == 'none':
@@ -133,6 +164,10 @@ def value_resampling(features_df, target, resampling_type, random_state,
     elif resampling_type == 'b_rand_aug':
         sel_log('now random augmentation sampling ...', logger)
         res_features, res_target = get_binary_random_augment_values(
+            features_df, target, pos_t, neg_t, random_state=random_state)
+    elif resampling_type == 'b_rand_aug_pair':
+        sel_log('now random augmentation sampling ...', logger)
+        res_features, res_target = get_binary_random_augment_values_w_pairs(
             features_df, target, pos_t, neg_t, random_state=random_state)
     else:
         sel_log(f'ERROR: wrong resampling type ({resampling_type})', logger)
