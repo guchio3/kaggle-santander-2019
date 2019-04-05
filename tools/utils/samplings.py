@@ -127,19 +127,19 @@ def get_binary_random_augment_values_w_pairs(
     # augment positive values
     for i in range(pos_t):
         pos_df = features_df.loc[pos_ids].copy()
-        for j in range(pos_df.shape[1] - 400):
-            k = j + 400 if j > 399 else [j, j + 400]
+        for j in range(pos_df.shape[1] - 600):
+            k = j + 600 if j > 599 else [j, j + 200, j + 400, j + 600]
             pos_df.iloc[:, k] = pos_df.iloc[:, k].sample(
-                frac=1, random_state=random_state * i * 10 + j)
+                frac=1, random_state=random_state * i * 10 + j).values
         res_dfs.append(pos_df)
         res_targets.append(pd.Series(np.ones(pos_df.shape[0])))
     # augment negative values
     for i in range(neg_t):
         neg_df = features_df.loc[neg_ids].copy()
-        for j in range(neg_df.shape[1] - 400):
-            k = j + 400 if j > 399 else [j, j + 400]
+        for j in range(neg_df.shape[1] - 600):
+            k = j + 600 if j > 599 else [j, j + 200, j + 400, j + 600]
             neg_df.iloc[:, k] = neg_df.iloc[:, k].sample(
-                frac=1, random_state=random_state * i * 10 + j)
+                frac=1, random_state=random_state * i * 10 + j).values
         res_dfs.append(neg_df)
         res_targets.append(pd.Series(np.zeros(neg_df.shape[0])))
     # concat values
@@ -166,7 +166,7 @@ def value_resampling(features_df, target, resampling_type, random_state,
         res_features, res_target = get_binary_random_augment_values(
             features_df, target, pos_t, neg_t, random_state=random_state)
     elif resampling_type == 'b_rand_aug_pair':
-        sel_log('now random augmentation sampling ...', logger)
+        sel_log('now random augmentation sampling w/ pairs ...', logger)
         res_features, res_target = get_binary_random_augment_values_w_pairs(
             features_df, target, pos_t, neg_t, random_state=random_state)
     else:
