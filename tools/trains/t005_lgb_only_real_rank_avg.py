@@ -137,7 +137,7 @@ def t005_lgb_train(args, script_name, configs, logger):
             num_boost_round=1000000,
             valid_sets=[valid_set, train_set],
             verbose_eval=1000,
-            early_stopping_rounds=10000,
+            early_stopping_rounds=5000,
             callbacks=[log_evaluation(logger, period=1000)],
         )
 
