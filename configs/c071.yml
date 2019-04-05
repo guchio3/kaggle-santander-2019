@@ -6,7 +6,6 @@ train:
     # resampling setting
     # sampling_type: pos
     sampling_type: b_rand_aug_pair
-    # sampling_type: none 
     os_lim: 1000000
     sampling_random_state: 71
     pos_t: 7
