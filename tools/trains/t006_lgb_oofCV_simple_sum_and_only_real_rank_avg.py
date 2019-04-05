@@ -233,7 +233,7 @@ def t006_lgb_train(args, script_name, configs, logger):
             preds.append(pred)
         if len(cv_model) > 1:
             target_values = np.mean(preds, axis=0)
-            target_values_no_rank = np.mean(preds, axis=0)
+            target_values_no_rank = np.mean(preds_no_rank, axis=0)
         else:
             target_values = preds[0]
             target_values_no_rank = preds[0]
