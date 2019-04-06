@@ -69,3 +69,30 @@ def parse_feature_args(logger=None):
     sel_log(f'args: {sorted(vars(args).items())}', logger)
     return args
 
+
+def parse_mk_oof_feature_args(logger=None):
+    '''
+    Policy
+    ------------
+    * experiment id must be required
+
+    '''
+    parser = argparse.ArgumentParser(
+        prog='XXX.py',
+        usage='ex) python XXX.py -f f001 -m "mk f001 features"',
+        description='short explanation of args',
+        add_help=True,
+    )
+    parser.add_argument('-o', '--oof_filename',
+                        type=str,
+                        required=True)
+    parser.add_argument('-s', '--sub_filename',
+                        type=str,
+                        required=True)
+    parser.add_argument('-c', '--col_name',
+                        type=str,
+                        required=True)
+
+    args = parser.parse_args()
+    sel_log(f'args: {sorted(vars(args).items())}', logger)
+    return args
