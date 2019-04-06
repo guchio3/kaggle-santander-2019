@@ -43,7 +43,7 @@ lgbm_params:
     cat_smooth: 750
     cat_l2: 100
     max_cat_to_onehot: 10
-    scale_pos_weight: 0.1
+    scale_pos_weight: 10
 
 features:
     - ID_code
