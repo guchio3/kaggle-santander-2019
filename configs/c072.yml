@@ -8,8 +8,8 @@ train:
     sampling_type: b_rand_aug_pair
     os_lim: 1000000
     sampling_random_state: 71
-    pos_t: 20
-    neg_t: 20
+    pos_t: 50
+    neg_t: 50
     # single model setting
     single_model: False
     # feature setting

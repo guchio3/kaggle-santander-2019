@@ -87,8 +87,7 @@ def t006_lgb_train(args, script_name, configs, logger):
     # -- Split using group k-fold w/ shuffling
     # NOTE: this is not stratified, I wanna implement it in the future
     if configs['train']['fold_type'] == 'skf':
-        skf = StratifiedKFold(n_splits=2, shuffle=True, random_state=4221)
-        # skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=4221)
+        skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=4221)
         folds = skf.split(features_df, target)
         configs['train']['single_model'] = False
     else:
@@ -179,9 +178,9 @@ def t006_lgb_train(args, script_name, configs, logger):
     # Save oofs
     oof_df = pd.DataFrame()
     oof_df['ID_code'] = trn_ids.iloc[np.concatenate(val_idxes)]
-    oof_df['y_val'] = np.concatenate()
+    oof_df['y_val'] = np.concatenate(y_trues)
     oof_df['oof_proba'] = np.concatenate(oofs)
-    oof_df = oof_df.set_index('ID_code').loc[trn_idx]
+    oof_df = oof_df.set_index('ID_code').loc[trn_ids]
     oof_df.to_csv(
         './mnt/oofs/' +
         filename_base +
@@ -234,7 +233,7 @@ def t006_lgb_train(args, script_name, configs, logger):
             preds.append(pred)
         if len(cv_model) > 1:
             target_values = np.mean(preds, axis=0)
-            target_values_no_rank = np.mean(preds, axis=0)
+            target_values_no_rank = np.mean(preds_no_rank, axis=0)
         else:
             target_values = preds[0]
             target_values_no_rank = preds[0]
