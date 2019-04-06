@@ -8,7 +8,7 @@ from tools.utils.args import parse_train_args
 from tools.utils.configs import load_configs
 from tools.utils.logs import logInit, send_line_notification
 
-CONFIG_FILE = './configs/c076.yml'
+CONFIG_FILE = './configs/c077.yml'
 
 if __name__ == '__main__':
     t0 = time.time()

@@ -109,6 +109,7 @@ def t006_lgb_train(args, script_name, configs, logger):
     y_trues = []
     val_idxes = []
     scores = []
+    best_iterations = []
     fold_importance_dict = {}
     cv_model = []
     for i, idxes in tqdm(list(enumerate(folds))):
@@ -153,6 +154,7 @@ def t006_lgb_train(args, script_name, configs, logger):
         auc = roc_auc_score(y_true, y_pred)
         sel_log(f'fold AUC: {auc}', logger=logger)
         scores.append(auc)
+        best_iterations.append(booster.best_iteration)
 
         # Save importance info
         fold_importance_df = pd.DataFrame()
@@ -165,11 +167,15 @@ def t006_lgb_train(args, script_name, configs, logger):
 
     auc_mean, auc_std = np.mean(scores), np.std(scores)
     auc_oof = roc_auc_score(np.concatenate(y_trues), np.concatenate(oofs))
+    best_iteration_mean = np.mean(best_iterations)
     sel_log(
         f'AUC_mean: {auc_mean:.5f}, AUC_std: {auc_std:.5f}',
         logger)
     sel_log(
         f'AUC OOF: {auc_oof}',
+        logger)
+    sel_log(
+        f'BEST ITER MEAN: {best_iteration_mean}',
         logger)
 
     # -- Post processings

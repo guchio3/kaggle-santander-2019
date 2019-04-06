@@ -23,22 +23,23 @@ train:
 # lightGBM parameters
 lgbm_params:
     boosting: gbdt
-    #    boost_from_average: False
+    boost_from_average: False
     verbose: -1
     random_state: 71
     objective: binary
     metric: binary_logloss
     # metric: auc
-    learning_rate: 0.01
-    # num_leaves: 256
-    num_leaves: 4
+    learning_rate: 0.001
+    #num_leaves: 7
+    num_leaves: 3
     max_depth: -1
     subsample: 0.4
-    bagging_freq: 5
+    bagging_freq: 1
     colsample_bytree: 1
     min_data_in_leaf: 60
     min_sum_hessian_in_leaf: 10.0
     lambda_l1: 0.1
+    num_iterations: 10415
 
 features:
     - ID_code
