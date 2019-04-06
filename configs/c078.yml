@@ -43,6 +43,7 @@ lgbm_params:
     cat_l2: 100
     max_cat_to_onehot: 10
     early_stopping_round: 2000
+    num_iterations: 6705
 
 features:
     - ID_code
