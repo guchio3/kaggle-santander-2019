@@ -10,10 +10,10 @@ def calc_CM(y_true, y_pred, thresh, epsilon=1e-7):
     y_neg_pred = 1 - y_pos_pred
 
     # calc tp, tn, fp, fn
-    tp = np.sum(y_pos_true * y_pos_pred)
-    tn = np.sum(y_neg_true * y_neg_pred)
-    fp = np.sum(y_neg_true * y_pos_pred)
-    fn = np.sum(y_pos_true * y_neg_pred)
+    tp = np.mean(y_pos_true * y_pos_pred)
+    tn = np.mean(y_neg_true * y_neg_pred)
+    fp = np.mean(y_neg_true * y_pos_pred)
+    fn = np.mean(y_pos_true * y_neg_pred)
     return tp, tn, fp, fn
 
 
@@ -24,7 +24,7 @@ def calc_best_CM(y_trues, y_preds, bins=300):
         _best_AUC = 0.
         best_thresh = 0.
         for thresh in tqdm(np.linspace(0.001, 0.999, bins)):
-            AUC = np.mean(y_true == y_pred > thresh)
+            AUC = np.mean((y_true == y_pred) > thresh)
             if AUC > _best_AUC:
                 _best_AUC = AUC
                 best_thresh = thresh
