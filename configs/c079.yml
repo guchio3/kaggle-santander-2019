@@ -30,7 +30,7 @@ lgbm_params:
     # metric: auc
     learning_rate: 0.001
     # num_leaves: 256
-    num_leaves: 7
+    num_leaves: 3
     max_depth: -1
     subsample: 0.4
     bagging_freq: 1
@@ -43,7 +43,9 @@ lgbm_params:
     cat_l2: 100
     max_cat_to_onehot: 10
     early_stopping_round: 2000
-    #    num_iterations: 7157
+    #    num_iterations: 7157 # bagging freq 5
+    #    num_iterations: 7197 # bagging freq 1
+    #    num_iterations: 7197 # bagging freq 1, num leaves 3
 
 features:
     - ID_code
