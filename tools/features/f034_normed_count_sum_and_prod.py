@@ -7,6 +7,7 @@ def f034_normed_count_sum_and_prod(df):
     res_df = pd.DataFrame()
     res_df['ID_code'] = df['ID_code']
     # do not use inplace for re-using
+    df = df.drop('target', axis=1)
     df = df.set_index(['ID_code'])
     trn_id = pd.read_pickle('./mnt/inputs/nes_info/trn_ID_code.pkl.gz')
     tst_id = pd.read_pickle('./mnt/inputs/nes_info/tst_ID_code.pkl.gz')
@@ -29,12 +30,12 @@ def f034_normed_count_sum_and_prod(df):
     normed_cnt_sum = res_df.sum(axis=1)
     normed_cnt_prod = res_df.prod(axis=1)
     res_df = res_df.reset_index()
-    res_df['normed_cnt_sum'] = normed_cnt_sum
-    res_df['normed_cnt_prod'] = normed_cnt_prod
-    res_df['normed_uniq_cnt_sum'] = normed_uniq_cnt_sum
-    res_df['normed_non_uniq_cnt_sum'] = normed_non_uniq_cnt_sum
-    res_df['normed_uniq_cnt_prod'] = normed_uniq_cnt_prod
-    res_df['normed_non_uniq_cnt_prod'] = normed_non_uniq_cnt_prod
+    res_df['normed_cnt_sum'] = normed_cnt_sum.values
+    res_df['normed_cnt_prod'] = normed_cnt_prod.values
+    res_df['normed_uniq_cnt_sum'] = normed_uniq_cnt_sum.values
+    res_df['normed_non_uniq_cnt_sum'] = normed_non_uniq_cnt_sum.values
+    res_df['normed_uniq_cnt_prod'] = normed_uniq_cnt_prod.values
+    res_df['normed_non_uniq_cnt_prod'] = normed_non_uniq_cnt_prod.values
     res_df = res_df[
             [
                 'ID_code',
