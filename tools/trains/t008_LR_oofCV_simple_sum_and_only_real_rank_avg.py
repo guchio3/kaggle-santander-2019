@@ -8,6 +8,7 @@ import lightgbm
 import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 from tqdm import tqdm
 
@@ -25,7 +26,7 @@ FEATURE_DIR = './mnt/inputs/features/'
 
 
 @dec_timer
-def t006_lgb_train(args, script_name, configs, logger):
+def t008_lr_train(args, script_name, configs, logger):
     '''
     policy
     ------------
@@ -109,8 +110,8 @@ def t006_lgb_train(args, script_name, configs, logger):
     y_trues = []
     val_idxes = []
     scores = []
-    best_iterations = []
-    fold_importance_dict = {}
+#    best_iterations = []
+#    fold_importance_dict = {}
     cv_model = []
     for i, idxes in tqdm(list(enumerate(folds))):
         trn_idx, val_idx = idxes
@@ -126,25 +127,16 @@ def t006_lgb_train(args, script_name, configs, logger):
             configs['train']['neg_t'],
             logger=logger)
 
-        # make lgbm dataset
-        train_set = lightgbm.Dataset(fold_features_df,
-                                     fold_target)
-        valid_set = lightgbm.Dataset(features_df.iloc[val_idx],
-                                     target[val_idx],)
         # train
-        booster = lightgbm.train(
-            params=PARAMS.copy(),
-            train_set=train_set,
-            num_boost_round=1000000,
-            valid_sets=[valid_set, train_set],
-            verbose_eval=1000,
-            early_stopping_rounds=5000,
-            callbacks=[log_evaluation(logger, period=1000)],
-        )
+        booster = LogisticRegression(
+                    C=configs['lr_params']['C'],
+                    random_state=configs['lr_params']['random_state'],
+                    solver=configs['lr_params']['solver'],
+                )
+        booster.fit(fold_features_df.values, fold_target.values)
 
         # predict using trained model
-        y_pred = booster.predict(features_df.values[val_idx],
-                                 num_iteration=None)
+        y_pred = booster.predict_proba(features_df.values[val_idx])[:, 1]
         y_true = target.values[val_idx]
         oofs.append(y_pred)
         y_trues.append(y_true)
@@ -154,29 +146,29 @@ def t006_lgb_train(args, script_name, configs, logger):
         auc = roc_auc_score(y_true, y_pred)
         sel_log(f'fold AUC: {auc}', logger=logger)
         scores.append(auc)
-        best_iterations.append(booster.best_iteration)
+#        best_iterations.append(booster.best_iteration)
 
         # Save importance info
-        fold_importance_df = pd.DataFrame()
-        fold_importance_df['split'] = booster.feature_importance('split')
-        fold_importance_df['gain'] = booster.feature_importance('gain')
-        fold_importance_dict[i] = fold_importance_df
+#        fold_importance_df = pd.DataFrame()
+#        fold_importance_df['split'] = booster.feature_importance('split')
+#        fold_importance_df['gain'] = booster.feature_importance('gain')
+#        fold_importance_dict[i] = fold_importance_df
 
         # save model
         cv_model.append(booster)
 
     auc_mean, auc_std = np.mean(scores), np.std(scores)
     auc_oof = roc_auc_score(np.concatenate(y_trues), np.concatenate(oofs))
-    best_iteration_mean = np.mean(best_iterations)
+#    best_iteration_mean = np.mean(best_iterations)
     sel_log(
         f'AUC_mean: {auc_mean:.5f}, AUC_std: {auc_std:.5f}',
         logger)
     sel_log(
         f'AUC OOF: {auc_oof}',
         logger)
-    sel_log(
-        f'BEST ITER MEAN: {best_iteration_mean}',
-        logger)
+#    sel_log(
+#        f'BEST ITER MEAN: {best_iteration_mean}',
+#        logger)
 
     # -- Post processings
     filename_base = f'{script_name}_{exp_time}_{auc_mean:.5}'
@@ -197,9 +189,9 @@ def t006_lgb_train(args, script_name, configs, logger):
 
     # Save importances
     # save_importance(configs['features'], fold_importance_dict,
-    save_importance(features, fold_importance_dict,
-                    './mnt/importances/' + filename_base + '_importances',
-                    topk=100, main_metric='gain')
+#    save_importance(features, fold_importance_dict,
+#                    './mnt/importances/' + filename_base + '_importances',
+#                    topk=100, main_metric='gain')
 
     # Save trained models
     with open('./mnt/trained_models/'
@@ -231,7 +223,7 @@ def t006_lgb_train(args, script_name, configs, logger):
         reals = np.load('./mnt/inputs/nes_info/real_samples_indexes.npz.npy')
         # for booster in tqdm(cv_model.boosters):
         for booster in tqdm(cv_model):
-            pred = booster.predict(test_features_df.values, num_iteration=None)
+            pred = booster.predict_proba(test_features_df.values)[:, 1]
             pred = pd.Series(pred)
             # rank avg only using real part
             preds_no_rank.append(pred.copy())
@@ -246,7 +238,7 @@ def t006_lgb_train(args, script_name, configs, logger):
         # blend single model
         if configs['train']['single_model']:
             pred = single_booster.predict(
-                test_features_df.values, num_iteration=None)
+                test_features_df.values)
             pred = pd.Series(pred)
             target_values = (target_values + (pred.rank() / pred.shape)) / 2
 

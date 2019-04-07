@@ -41,6 +41,13 @@ lgbm_params:
     lambda_l1: 0.1
     num_iterations: 10415
 
+# lightGBM parameters
+lr_params:
+    C: 0.0001
+    random_state: 71
+    solver: liblinear
+
+
 features:
     - ID_code
     - graseck_092310

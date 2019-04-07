@@ -44,9 +44,6 @@ def t006_lgb_train(args, script_name, configs, logger):
         * submissions (if test mode)
 
     '''
-    # -- Prepare for training
-    exp_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-
     # -- Load train data
     sel_log('loading training data ...', None)
     trn_ids = pd.read_pickle(
@@ -77,8 +74,6 @@ def t006_lgb_train(args, script_name, configs, logger):
                                      configs['train']['feature_select_path'],
                                      configs['train']['metric'],
                                      configs['train']['feature_topk'])
-    features = trn_tst_df.columns
-
     # split train and test
     sel_log(f'now splitting the df to train and test ones ...', None)
     features_df = trn_tst_df.loc[trn_ids].reset_index(drop=True)
@@ -105,107 +100,9 @@ def t006_lgb_train(args, script_name, configs, logger):
     PARAMS['nthread'] = os.cpu_count()
 
     sel_log('start training ...', None)
-    oofs = []
-    y_trues = []
-    val_idxes = []
-    scores = []
-    best_iterations = []
-    fold_importance_dict = {}
-    cv_model = []
-    for i, idxes in tqdm(list(enumerate(folds))):
-        trn_idx, val_idx = idxes
-        # -- Data resampling
-        # Stock original data for validation
-        fold_features_df, fold_target = value_resampling(
-            features_df.iloc[trn_idx],
-            target[trn_idx],
-            configs['train']['sampling_type'],
-            configs['train']['sampling_random_state'],
-            configs['train']['os_lim'],
-            configs['train']['pos_t'],
-            configs['train']['neg_t'],
-            logger=logger)
 
-        # make lgbm dataset
-        train_set = lightgbm.Dataset(fold_features_df,
-                                     fold_target)
-        valid_set = lightgbm.Dataset(features_df.iloc[val_idx],
-                                     target[val_idx],)
-        # train
-        booster = lightgbm.train(
-            params=PARAMS.copy(),
-            train_set=train_set,
-            num_boost_round=1000000,
-            valid_sets=[valid_set, train_set],
-            verbose_eval=1000,
-            early_stopping_rounds=5000,
-            callbacks=[log_evaluation(logger, period=1000)],
-        )
-
-        # predict using trained model
-        y_pred = booster.predict(features_df.values[val_idx],
-                                 num_iteration=None)
-        y_true = target.values[val_idx]
-        oofs.append(y_pred)
-        y_trues.append(y_true)
-        val_idxes.append(val_idx)
-
-        # Calc AUC
-        auc = roc_auc_score(y_true, y_pred)
-        sel_log(f'fold AUC: {auc}', logger=logger)
-        scores.append(auc)
-        best_iterations.append(booster.best_iteration)
-
-        # Save importance info
-        fold_importance_df = pd.DataFrame()
-        fold_importance_df['split'] = booster.feature_importance('split')
-        fold_importance_df['gain'] = booster.feature_importance('gain')
-        fold_importance_dict[i] = fold_importance_df
-
-        # save model
-        cv_model.append(booster)
-
-    auc_mean, auc_std = np.mean(scores), np.std(scores)
-    auc_oof = roc_auc_score(np.concatenate(y_trues), np.concatenate(oofs))
-    best_iteration_mean = np.mean(best_iterations)
-    sel_log(
-        f'AUC_mean: {auc_mean:.5f}, AUC_std: {auc_std:.5f}',
-        logger)
-    sel_log(
-        f'AUC OOF: {auc_oof}',
-        logger)
-    sel_log(
-        f'BEST ITER MEAN: {best_iteration_mean}',
-        logger)
-
-    # -- Post processings
-    filename_base = f'{script_name}_{exp_time}_{auc_mean:.5}'
-
-    # Save oofs
-    oof_df = pd.DataFrame()
-    oof_df['ID_code'] = trn_ids.iloc[np.concatenate(val_idxes)]
-    oof_df['y_val'] = np.concatenate(y_trues)
-    oof_df['oof_proba'] = np.concatenate(oofs)
-    oof_df = oof_df.set_index('ID_code').loc[trn_ids]
-    oof_df.to_csv(
-        './mnt/oofs/' +
-        filename_base +
-        '_oofs.csv',
-        index=True)
-    with open('./mnt/oofs/' + filename_base + '_oofs.pkl', 'wb') as fout:
-        pickle.dump([val_idxes, oofs], fout)
-
-    # Save importances
-    # save_importance(configs['features'], fold_importance_dict,
-    save_importance(features, fold_importance_dict,
-                    './mnt/importances/' + filename_base + '_importances',
-                    topk=100, main_metric='gain')
-
-    # Save trained models
-    with open('./mnt/trained_models/'
-              + filename_base
-              + '_models.pkl', 'wb') as fout:
-        pickle.dump(cv_model, fout)
+    with open('e071_e036_t006_w_pair_augmentation_7_7_2019-04-05-17-35-24_0.92357_models.pkl', 'rb') as fin:
+        cv_model = pickle.load(fin)
 
     # --- Make submission file
     if args.test:
@@ -262,16 +159,8 @@ def t006_lgb_train(args, script_name, configs, logger):
         sub_df_no_rank.target = target_values_no_rank
 
         # print stats
-        submission_filename = f'./mnt/submissions/{filename_base}_sub.csv.gz'
-        submission_filename_no_rank = f'./mnt/submissions/{filename_base}_sub_no_rank.csv'
-        sel_log(f'saving submission file to {submission_filename}', logger)
-        sub_df.to_csv(submission_filename, compression='gzip', index=False)
+        submission_filename_no_rank = f'./mnt/submissions/temp.csv'
         sub_df_no_rank.to_csv(
             submission_filename_no_rank,
             index=False)
-        if args.submit:
-            os.system(
-                f'kaggle competitions submit '
-                f'santander-customer-transaction-prediction '
-                f'-f {submission_filename} -m "{args.message}"')
-    return auc_mean, auc_std, auc_oof
+    return None, None, None

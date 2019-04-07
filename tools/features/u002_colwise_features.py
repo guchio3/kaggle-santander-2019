@@ -19,6 +19,8 @@ from .f027_f014_3nonuniq import f027_f014_3nonuniq
 from .f028_f014_4uniq import f028_f014_4uniq
 from .f029_f014_4nonuniq import f029_f014_4nonuniq
 from .f030_non_common_features import f030_non_common_features
+from .f033_real_count_encoding import f033_real_count_encoding
+from .f034_normed_count_sum_and_prod import f034_normed_count_sum_and_prod
 
 
 def _colwise_features(df, feature_ids):
@@ -57,6 +59,10 @@ def _colwise_features(df, feature_ids):
         _features.append(f029_f014_4nonuniq(df))
     if 'f030' in feature_ids:
         _features.append(f030_non_common_features(df))
+    if 'f033' in feature_ids:
+        _features.append(f033_real_count_encoding(df))
+    if 'f034' in feature_ids:
+        _features.append(f034_normed_count_sum_and_prod(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -84,6 +90,8 @@ def _load_colwise_features(
         'f028',
         'f029',
         'f030',
+        'f033',
+        'f034',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
