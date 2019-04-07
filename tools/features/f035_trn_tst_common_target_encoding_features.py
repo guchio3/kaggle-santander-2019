@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.model_selection import StratifiedKFold
+from tqdm import tqdm
+
+from ..utils.encodings import target_encode
 
 
 def f035_trn_tst_common_target_encoding_features(df):
@@ -25,19 +27,30 @@ def f035_trn_tst_common_target_encoding_features(df):
             lambda x: x if x in valid_values else np.nan).values
     # make fit_df
     res_df = res_df.set_index('ID_code')
-    fit_df = res_df.loc[trn_id].copy()
+    trn_res_df = res_df.loc[trn_id].copy()
+    tst_res_df = res_df.loc[tst_id].copy()
     # fold-wise target encoding
     for col in tqdm(res_df.columns):
         # make fold
+        target_col = trn_res_df[col]
+        tst_target_col = tst_res_df[col]
         skf = StratifiedKFold(10, random_state=71)
-        folds = skf.split(fit_df[col], target)
-
-        trn_col = df.loc[trn_id][col]
-        real_col = df.loc[tst_id][col].iloc[reals]
-        uniq_cnt_dict = pd.concat(
-            [trn_col, real_col], axis=0).value_counts().to_dict()
-        res_df['real_count_encoding_' + col] = df[col].apply(
-            lambda x: np.nan if np.isnan(x) else uniq_cnt_dict[x]).values
+        folds = skf.split(target_col, target)
+        for trn_idx, val_idx in folds:
+            _, enc_val = target_encode(
+                target_col.iloc[trn_idx],
+                target_col.iloc[val_idx],
+                target.iloc[trn_idx],
+            )
+            target_col.iloc[val_idx] = enc_val
+        trn_res_df[col] = target_col
+        _, tst_val = target_encode(
+                target_col,
+                tst_target_col,
+                target,
+            )
+        tst_res_df[col] = tst_val
+    res_df = pd.concat([trn_res_df, tst_res_df], axis=0)
     # return as id is set to the index
     res_df = res_df.set_index('ID_code').add_prefix('f035_')
     return res_df
