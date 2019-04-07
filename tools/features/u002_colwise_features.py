@@ -21,6 +21,7 @@ from .f029_f014_4nonuniq import f029_f014_4nonuniq
 from .f030_non_common_features import f030_non_common_features
 from .f033_real_count_encoding import f033_real_count_encoding
 from .f034_normed_count_sum_and_prod import f034_normed_count_sum_and_prod
+from .f035_trn_tst_common_target_encoding_features import f035_trn_tst_common_target_encoding_features
 
 
 def _colwise_features(df, feature_ids):
@@ -63,6 +64,8 @@ def _colwise_features(df, feature_ids):
         _features.append(f033_real_count_encoding(df))
     if 'f034' in feature_ids:
         _features.append(f034_normed_count_sum_and_prod(df))
+    if 'f035' in feature_ids:
+        _features.append(f035_trn_tst_common_target_encoding_features(df))
     # merge cols
     # reset index to get id as a column
     features = pd.concat(_features, axis=1).reset_index()
@@ -92,6 +95,7 @@ def _load_colwise_features(
         'f030',
         'f033',
         'f034',
+        'f035',
     ]
     if len(set(target_ids) & set(feature_ids)) < 1:
         sel_log(f'''
