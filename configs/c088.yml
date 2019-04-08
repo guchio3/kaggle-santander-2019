@@ -31,7 +31,7 @@ lgbm_params:
     # metric: auc
     learning_rate: 0.01
     # num_leaves: 256
-    num_leaves: 16
+    num_leaves: 7
     max_depth: -1
     subsample: 0.4
     bagging_freq: 5
