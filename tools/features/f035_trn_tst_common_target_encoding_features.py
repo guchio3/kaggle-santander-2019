@@ -51,6 +51,7 @@ def f035_trn_tst_common_target_encoding_features(df):
             )
         tst_res_df[col] = tst_val
     res_df = pd.concat([trn_res_df, tst_res_df], axis=0)
+    res_df = res_df.reset_index()
     # return as id is set to the index
     res_df = res_df.set_index('ID_code').add_prefix('f035_')
     return res_df
