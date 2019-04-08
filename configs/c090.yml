@@ -35,20 +35,17 @@ lgbm_params:
     max_depth: -1
     subsample: 0.4
     bagging_freq: 5
-    colsample_bytree: 0.1
-    min_data_in_leaf: 20
-    min_sum_hessian_in_leaf: 10
+    colsample_bytree: 0.05
+    min_data_in_leaf: 60
+    min_sum_hessian_in_leaf: 10.0
     lambda_l1: 0.1
     min_data_per_group: 1
     cat_smooth: 750
     cat_l2: 100
     max_cat_to_onehot: 10
-
-# lightGBM parameters
-lr_params:
-    C: 0.0001
-    random_state: 71
-    solver: liblinear
+    bin_construct_sample_cnt: 20000000
+    min_data_in_bin: 3
+    max_bin: 1000
 
 features:
     - ID_code
@@ -852,4 +849,3 @@ features:
     - f020_non_2uniq_real_var_97
     - f020_non_2uniq_real_var_98
     - f020_non_2uniq_real_var_99
-

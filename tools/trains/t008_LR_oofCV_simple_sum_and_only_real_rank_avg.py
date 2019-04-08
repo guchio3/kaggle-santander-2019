@@ -72,6 +72,10 @@ def t008_lr_train(args, script_name, configs, logger):
     trn_tst_df = load_features(_features, FEATURE_DIR, logger=logger)\
         .set_index('ID_code')
 
+    # interpolation
+    for col in trn_tst_df.columns:
+        trn_tst_df[col] = trn_tst_df[col].fillna(trn_tst_df[col].mean())
+
     # feature selection if needed
     if configs['train']['feature_selection']:
         trn_tst_df = select_features(trn_tst_df,

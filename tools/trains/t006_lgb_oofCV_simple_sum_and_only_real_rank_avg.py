@@ -102,7 +102,8 @@ def t006_lgb_train(args, script_name, configs, logger):
     # -- CV
     # Set params
     PARAMS = configs['lgbm_params']
-    PARAMS['nthread'] = os.cpu_count()
+    if 'nthread' not in PARAMS:
+        PARAMS['nthread'] = os.cpu_count()
 
     sel_log('start training ...', None)
     oofs = []
