@@ -25,8 +25,10 @@ def mk_rank_oof_features(oof_filename, sub_filename, col_name):
     oof_df = pd.read_csv(oof_filename)
     sub_df = pd.read_csv(sub_filename)
     skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=4221)
+    target = pd.read_pickle('./mnt/inputs/nes_info/target.pkl.gz')
+    fold = skf.split(oof_df, target)
     # make it rank in each fold
-    for trn_idx, val_idx in range(skf):
+    for trn_idx, val_idx in fold:
         oof_feature.iloc[val_idx] = (
             oof_feature.iloc[val_idx].rank() / len(val_idx)).values
     sub_df['target'] = (sub_df['target'].rank() / len(sub_df)).values

@@ -1,0 +1,60 @@
+# training settings
+train:
+    # fold setting
+    fold_num: 10
+    fold_type: skf
+    # resampling setting
+    # sampling_type: pos
+    sampling_type: none
+    os_lim: 1000000
+    sampling_random_state: 71
+    pos_t: 0
+    neg_t: 0
+    # single model setting
+    single_model: False
+    # feature setting
+    all_features: False
+    # feature selection setting
+    feature_selection: False
+    feature_select_path: 'importances/'
+    metric: 'split_cov'
+    feature_topk: 150
+
+# lightGBM parameters
+lgbm_params:
+    boosting: gbdt
+    boost_from_average: False
+    verbose: -1
+    random_state: 71
+    objective: binary
+    metric: binary_logloss
+    # metric: auc
+    learning_rate: 0.001
+    #num_leaves: 7
+    num_leaves: 3
+    max_depth: -1
+    subsample: 0.4
+    bagging_freq: 1
+    colsample_bytree: 1
+    min_data_in_leaf: 60
+    min_sum_hessian_in_leaf: 10.0
+    lambda_l1: 0.1
+    num_iterations: 10415
+
+# lightGBM parameters
+lr_params:
+    C: 0.001
+    random_state: 71
+    solver: liblinear
+
+
+features:
+    - ID_code
+    - graseck_rank_092245
+    - guchio_rank_092360
+    - guchio_rank_092396
+    - nagiss_nn_rank_092118 
+    - nagiss_nn_rank_092386
+    - nagiss_rank_0921
+    - vicens_rank_092391
+
