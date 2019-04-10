@@ -2,13 +2,13 @@ import os
 import time
 from logging import getLogger
 
-from tools.trains.t006_lgb_oofCV_simple_sum_and_only_real_rank_avg import \
-    t006_lgb_train as train
+from tools.trains.t009_lgb_oofCV_simple_sum_and_only_real_rank_avg_skf_6262 import \
+    t009_lgb_train as train
 from tools.utils.args import parse_train_args
 from tools.utils.configs import load_configs
 from tools.utils.logs import logInit, send_line_notification
 
-CONFIG_FILE = './configs/c091.yml'
+CONFIG_FILE = './configs/c099.yml'
 
 if __name__ == '__main__':
     t0 = time.time()

@@ -25,7 +25,7 @@ FEATURE_DIR = './mnt/inputs/features/'
 
 
 @dec_timer
-def t006_lgb_train(args, script_name, configs, logger):
+def t009_lgb_train(args, script_name, configs, logger):
     '''
     policy
     ------------
