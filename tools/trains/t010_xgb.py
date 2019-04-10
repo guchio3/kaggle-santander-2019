@@ -107,6 +107,9 @@ def t010_xgb_train(args, script_name, configs, logger):
         PARAMS['nthread'] = os.cpu_count()
     PARAMS['interaction_constraints'] = [[v, 200 + v, 400 + v, 600 + v]
                                          for v in range(200)]
+    PARAMS['eval_metric'] = "logloss"
+    PARAMS['objective'] = "binary:logistic"
+#    PARAMS['booster'] = 'gblinear'
 
     sel_log('start training ...', None)
     oofs = []
@@ -115,7 +118,7 @@ def t010_xgb_train(args, script_name, configs, logger):
     scores = []
     best_iterations = []
     cv_model = []
-    for i, idxes in tqdm(list(enumerate(folds))):
+    for i, idxes in list(enumerate(folds)):
         trn_idx, val_idx = idxes
         # -- Data resampling
         # Stock original data for validation
@@ -134,19 +137,22 @@ def t010_xgb_train(args, script_name, configs, logger):
                                 label=fold_target.values)
         valid_set = xgb.DMatrix(features_df.values[val_idx],
                                 label=target.values[val_idx])
+        pred_set = xgb.DMatrix(features_df.values[val_idx])
         # train
         booster = xgb.train(
             params=PARAMS.copy(),
             dtrain=train_set,
             num_boost_round=1000000,
-            evals=[valid_set, train_set],
-            verbose_eval=1000,
-            early_stopping_rounds=5000,
-            callbacks=[log_evaluation(logger, period=1000)],
+            evals=[
+                (valid_set, 'valid'),
+                ],
+            verbose_eval=10,
+            early_stopping_rounds=30,
         )
 
         # predict using trained model
-        y_pred = booster.predict_proba(features_df.values[val_idx])[:, 1]
+        y_pred = booster.predict(pred_set)# [:, 1]
+        print(y_pred)
         y_true = target.values[val_idx]
         oofs.append(y_pred)
         y_trues.append(y_true)
@@ -206,7 +212,8 @@ def t010_xgb_train(args, script_name, configs, logger):
         reals = np.load('./mnt/inputs/nes_info/real_samples_indexes.npz.npy')
         # for booster in tqdm(cv_model.boosters):
         for booster in tqdm(cv_model):
-            pred = booster.predict_proba(test_features_df.values)[:, 1]
+            test_set = xgb.DMatrix(test_features_df.values)
+            pred = booster.predict(test_set)
             pred = pd.Series(pred)
             # rank avg only using real part
             preds_no_rank.append(pred.copy())

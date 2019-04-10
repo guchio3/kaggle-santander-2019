@@ -8,8 +8,8 @@ train:
     sampling_type: b_rand_aug_pair
     os_lim: 1000000
     sampling_random_state: 71
-    pos_t: 10
-    neg_t: 10
+    pos_t: 5
+    neg_t: 0
     # single model setting
     single_model: False
     # feature setting
@@ -48,26 +48,31 @@ lgbm_params:
     max_bin: 1000
 
 xgb_params:
-    boosting: gbdt
+    #    boosting: gbdt
+    #    booster: gblinear
     grow_policy: lossguide
+    # objective: binary
     objective: binary:logistic
-    eval_metric: auc,
+    eval_metric: logloss,
     tree_method: hist
     random_state: 71
     # metric: auc
-    eta: 0.01
+    eta: 0.1
     # num_leaves: 256
     #    num_leaves: 7
-    max_depth: 5
-    subsample: 0.4
+    max_depth: 0
+    max_leaves: 3
+    subsample: 1
     bagging_freq: 5
-    colsample_bytree: 0.05
+    colsample_bytree: 1
     min_data_in_leaf: 60
-    min_child_weight: 10.0
+    min_child_weight: 5.45
     lambda: 0.1
     min_data_per_group: 1
     #    bin_construct_sample_cnt: 20000000
-    max_bin: 1000
+    max_bin: 256
+    verbose: -1
+    silent: 1
 
 features:
     - ID_code
