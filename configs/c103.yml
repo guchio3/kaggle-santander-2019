@@ -38,24 +38,18 @@ lgbm_params:
     colsample_bytree: 1
     min_data_in_leaf: 60
     min_sum_hessian_in_leaf: 10.0
-    lambda_l1: 0.1
-    num_iterations: 10415
-
-# lightGBM parameters
-lr_params:
-    C: 0.0001
-    random_state: 71
-    solver: liblinear
-
+    # lambda_l1: 0.1
+    #    num_iterations: 10415
 
 features:
     - ID_code
     - graseck_rank_092245
     - guchio_rank_092360
+      #    - guchio_rank_092396_seedavg
     - guchio_rank_092396
-    - nagiss_nn_rank_092118 
+      #    - nagiss_nn_rank_092118 
     - nagiss_nn_rank_092386
+    - nagiss_nn_92386_seedavg
     - nagiss_rank_0921
     - vicens_rank_092391
-      #    - guchio_XGB_092176
     - nagiss_nn_92358
