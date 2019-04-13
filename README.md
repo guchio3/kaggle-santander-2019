@@ -4,7 +4,7 @@
 
 ```
 # Making features
-ex) PYTHONPATH=. python run/mk_features.py -f f001 f010 
+ex) PYTHONPATH=. python runs/mk_features.py -f f001 f010 
 
 # run experiment (-t means making submission file)
 ex) PYTHONPATH=. python runs/e032_filtered_uniq_and_non_uniq.py -t
